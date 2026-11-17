@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一起玩玩看！</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: warm, light, no pressure; plain words for caregivers reading on a phone
+   IDEA: a toy box you open one toy at a time — home is a grid of toy cards, each toy gets its own page
+   PICTURE: the real toy photos on the cards; each toy page leads with its demo video, full width on phones
+   COLOUR and TYPE: sunny yellow header, night-blue ink, coral accent; each toy keeps its own colour. Huninn titles + Noto Sans TC
+   LAYOUT: phone first — 2-column toy cards, one toy per page with age switch and prev/next; video beside text on wide screens */
+:root{color-scheme:light dark;
+ --bg:light-dark(#fffdf8,#14182a);--ink:light-dark(#1f2a44,#eef0f8);--soft:light-dark(#5a6480,#b6bdd2);
+ --sun:light-dark(#ffcf4a,#2a2f4d);--sunInk:light-dark(#1f2a44,#ffe08a);--card:light-dark(#ffffff,#1d2238);
+ --line:light-dark(#efe6d4,#2d3350);--coral:light-dark(#e2553d,#ff8a73)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.75 "Noto Sans TC",system-ui,sans-serif;overflow-x:clip;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:Huninn,"Noto Sans TC",sans-serif;font-weight:400;line-height:1.2;text-wrap:balance;margin:0}
+p{margin:.4em 0}
+button{font:inherit;color:inherit}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+[hidden]{display:none!important}
+/* home */
+.hero{position:relative;overflow:hidden;background:var(--sun);color:var(--sunInk);padding:24px 0 20px}
+.hero .deco{position:absolute;inset:0;width:100%;height:100%}
+.hero .wrap{position:relative}
+.hgrid{display:flex;align-items:center;gap:8px}
+.htext{flex:1}
+.hero h1{font-size:clamp(40px,11vw,60px);line-height:1.08}
+.hero .note b{color:#d8452e;font-size:16.5px}
+.hero .note{display:inline-block;line-height:1.6;margin:4px 0 0;padding:6px 14px;border-radius:12px;background:light-dark(#fff,#1d2238);color:var(--ink);font-size:15px;font-weight:700;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+.toys{flex:none;width:clamp(120px,34vw,220px);height:auto}
+.how{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.how li{display:flex;align-items:center;gap:8px;background:light-dark(rgba(255,255,255,.75),rgba(20,24,42,.6));border-radius:14px;padding:10px 10px;font-weight:700;font-size:14.5px;line-height:1.35;color:var(--ink)}
+.how i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;color:#fff;font-size:14px}
+.how li:nth-child(1) i{background:#e8574a}.how li:nth-child(2) i{background:#3d82d6}.how li:nth-child(3) i{background:#4fae6a}
+@media(max-width:380px){.how li{flex-direction:column;text-align:center;gap:4px}}
+@media(min-width:700px){br.m,.how br{display:none}}
+.tag{display:inline-block;font-size:14px;font-weight:700;padding:3px 12px;border-radius:99px;background:var(--ink);color:var(--bg);margin-bottom:10px}
+.pick{padding:22px 0 8px}
+.notice{margin:22px 0 4px;padding:16px;border-radius:20px;background:light-dark(#fff6dc,#2e2a1c);border:2px solid light-dark(#f3d98a,#5a4c22)}
+.notice h2{font-size:22px;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.notice .nb{width:30px;height:30px;border-radius:50%;background:#e2553d;color:#fff;display:grid;place-items:center;font-family:"Noto Sans TC",sans-serif;font-weight:700;font-size:18px}
+.nrow{display:flex;gap:12px;align-items:flex-start;background:var(--card);border-radius:14px;padding:12px 14px;margin-top:8px}
+.nrow .ni{flex:none;width:34px;height:34px;border-radius:10px;background:var(--n);display:grid;place-items:center}
+.nrow p{margin:0;font-size:15.5px;line-height:1.7}
+.nrow a{display:inline-block;margin-top:2px;color:#2f7a4b;font-weight:700;text-decoration:none}
+.tnote{display:flex;gap:8px;align-items:flex-start;margin:12px 0 0;padding:10px 12px;border-radius:12px;background:light-dark(#fff6dc,#2e2a1c);font-size:14.5px;line-height:1.6}
+.tnote b{flex:none;width:22px;height:22px;border-radius:50%;background:#e2553d;color:#fff;display:grid;place-items:center;font-size:13px;margin-top:2px}
+.tipsec{margin:26px 0 6px}
+.tipsec h2{font-size:24px}
+.tipgrid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.tipgrid li{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:2px solid var(--line);border-left:8px solid var(--tc);border-radius:16px;padding:12px 14px}
+.tipgrid .tn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--tc);color:#fff;font-weight:700;display:grid;place-items:center;font-size:16px}
+.tipgrid b{display:block;font-family:Huninn,sans-serif;font-weight:400;font-size:19px;line-height:1.35}
+.tipgrid p{margin:2px 0 0;font-size:15.5px;color:var(--soft)}
+@media(min-width:700px){.tipgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.tipgrid li:last-child{grid-column:1/-1}}
+.more{margin:30px 0 6px}
+.more h2{font-size:24px}
+.mlead{color:var(--soft);margin:2px 0 12px;font-size:15.5px}
+.mgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.mc{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:center;padding:14px;border-radius:20px;background:color-mix(in srgb,var(--m) 12%,var(--card));border:2px solid color-mix(in srgb,var(--m) 35%,var(--line));text-decoration:none;color:var(--ink)}
+.mi{width:52px;height:52px;border-radius:16px;background:var(--m);display:grid;place-items:center;grid-row:span 1}
+.mt b{display:block;font-family:Huninn,sans-serif;font-weight:400;font-size:20px;line-height:1.3}
+.mt small{display:block;color:var(--soft);font-size:14px;line-height:1.5}
+.mgo{grid-column:1/-1;display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:8px;border-radius:14px;background:var(--m);color:#fff;font-weight:700;font-size:16px;text-decoration:none}
+a.mc:active,.mc .mgo:active{transform:translateY(2px)}
+.mc .qr{display:none}
+@media(min-width:700px){.mgrid{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
+ .mc{grid-template-columns:auto minmax(0,1fr) auto}.mc .mgo{grid-column:auto;margin-top:0;padding:0 18px;white-space:nowrap}
+ .mc.line{grid-column:2;grid-row:1/span 2;grid-template-columns:auto minmax(0,1fr);align-content:center}
+ .mc.line .mgo{grid-column:1/-1;margin-top:10px}
+ .mc .qr{display:block;grid-column:1/-1;width:120px;height:120px;margin:10px auto 0;border-radius:10px;background:#fff;padding:4px}}
+.pick h2{font-size:24px;margin-bottom:12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pick h2 .hint{font-family:"Noto Sans TC",sans-serif;font-size:14px;color:var(--soft);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.grid a{display:flex;flex-direction:column;height:100%;text-decoration:none;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .2s}
+.grid a:active{transform:scale(.97)}
+.grid img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#fff}
+.grid .nm{display:flex;align-items:center;gap:8px;padding:10px 12px 12px;border-top:5px solid var(--c);font-weight:700;font-size:16px;line-height:1.35;flex:1}
+.grid .nm small{display:block;font-weight:400;font-size:13px;color:var(--soft)}
+.play{flex:none;margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--c);display:grid;place-items:center}
+.play::before{content:"";border-left:10px solid #fff;border-top:6px solid transparent;border-bottom:6px solid transparent;margin-left:3px}
+/* toy page */
+.bar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;gap:10px;height:56px}
+.back{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 14px 0 8px;border-radius:99px;border:2px solid var(--line);background:var(--card);text-decoration:none;color:var(--ink);font-weight:700;font-size:15px;flex:none}
+.back::before{content:"‹";font-size:26px;line-height:1;margin-top:-3px}
+.bar .t{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .dot{width:12px;height:12px;border-radius:50%;background:var(--c);flex:none}
+.toy{padding-bottom:20px}
+.toy .lay{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.vid{background:#000}
+.vid video{width:100%;max-width:520px;aspect-ratio:4/5;display:block;margin:0 auto;background:#000}
+.body{padding:18px 0 0}
+.body h1{font-size:32px;color:var(--ink)}
+.body .sub{color:var(--soft);font-size:15px;margin-top:2px}
+.skills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px;padding:0;list-style:none}
+.skills li{background:color-mix(in srgb,var(--c) 16%,var(--card));font-weight:700;font-size:14.5px;padding:5px 12px;border-radius:12px}
+.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:5px;margin:20px 0 6px;background:color-mix(in srgb,var(--c) 12%,var(--card));border-radius:16px;position:sticky;top:62px;z-index:3}
+.seg button{min-height:52px;border:0;border-radius:12px;background:transparent;cursor:pointer;line-height:1.25;padding:6px}
+.seg button b{display:block;font-size:16.5px}
+.seg button small{font-size:13px;color:var(--soft)}
+.seg button[aria-pressed=true]{background:var(--c);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.seg button[aria-pressed=true] small{color:#fff}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:14px 0 14px 46px;border-bottom:1px dashed var(--line)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:16px;width:32px;height:32px;border-radius:50%;background:var(--c);color:#fff;font-weight:700;font-size:15px;display:grid;place-items:center}
+.steps b{display:block;font-size:18px}
+.steps p{margin:2px 0 0;color:var(--soft);font-size:16px}
+.h3{font-family:Huninn,sans-serif;font-size:21px;margin:24px 0 8px}
+.say{display:flex;flex-direction:column;gap:10px}
+.say div{align-self:flex-start;background:var(--card);border:2px solid color-mix(in srgb,var(--c) 45%,var(--line));border-radius:20px 20px 20px 6px;padding:8px 16px;font-weight:500}
+.note{border-radius:18px;padding:14px 16px;margin-top:12px}
+.note b{display:block;font-family:Huninn,sans-serif;font-weight:400;font-size:19px}
+.note p{font-size:16px;margin:4px 0 0}
+.more{background:color-mix(in srgb,var(--c) 14%,var(--card))}
+.safe{background:light-dark(#fff0e8,#3a2522)}.safe b{color:var(--coral)}
+.pn{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:26px}
+.pn a{display:flex;flex-direction:column;justify-content:center;min-height:64px;padding:8px 14px;border-radius:16px;border:2px solid var(--line);background:var(--card);text-decoration:none;color:var(--ink);font-weight:700;font-size:15.5px;line-height:1.35}
+.pn a small{font-weight:400;color:var(--soft);font-size:13px}
+.pn a.nx{text-align:right}
+.all{display:flex;justify-content:center;align-items:center;min-height:52px;margin-top:10px;border-radius:16px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:700}
+footer{padding:26px 0 36px;color:var(--soft);font-size:14px}
+footer .wrap>div{border-top:1px solid var(--line);padding-top:16px}
+/* growth page */
+.gbtn{display:flex;flex-direction:column;gap:12px;margin:20px 0 4px;padding:16px;border-radius:22px;background:linear-gradient(135deg,#4f9d69,#2f7a4b);color:#fff;text-decoration:none;box-shadow:0 6px 0 #22603a,0 10px 20px rgba(47,122,75,.25);position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.gbtn::before{content:"";position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.12)}
+.gbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #22603a,0 4px 10px rgba(47,122,75,.25)}
+.gtop{display:flex;align-items:center;gap:14px;position:relative}
+.gbtn .ic{flex:none;width:56px;height:56px;border-radius:18px;background:rgba(255,255,255,.2);display:grid;place-items:center}
+.gbtn b{display:block;font-family:Huninn,sans-serif;font-weight:400;font-size:24px;line-height:1.25}
+.gbtn small{display:block;color:rgba(255,255,255,.88);font-size:14px;line-height:1.5}
+.gbtn small.kick{display:inline-block;background:#ffcf4a;color:#1f2a44;font-weight:700;font-size:12.5px;padding:1px 10px;border-radius:99px;margin-bottom:4px}
+.gbtn .go{display:flex;align-items:center;justify-content:center;gap:6px;min-height:46px;border-radius:14px;background:#fff;color:#2f7a4b;font-weight:700;font-size:16px;position:relative}
+.gbtn .go i{font-style:normal;font-size:24px;line-height:1;margin-top:-2px;animation:nudge 1.4s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(5px)}}
+@media(prefers-reduced-motion:reduce){.gbtn .go i{animation:none}}
+@media(min-width:700px){.gbtn{flex-direction:row;align-items:center;justify-content:space-between}.gbtn .go{min-width:170px}}
+.gv{--c:#4f9d69}
+.gv h1{font-size:32px;margin-top:20px}
+.lead2{color:var(--soft)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0;margin:8px 0 4px;position:sticky;top:56px;z-index:3;background:var(--bg);scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;min-height:44px;padding:0 16px;border-radius:99px;border:2px solid var(--line);background:var(--card);font-weight:700;font-size:15.5px;cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#fff}
+.doms{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:8px}
+.dom{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:14px 16px}
+.dom h3{font-size:20px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.dom h3 small{font-family:"Noto Sans TC",sans-serif;font-size:13px;color:var(--soft)}
+.vbtn{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;padding:6px 12px 6px 6px;min-height:56px;border:2px solid var(--line);border-radius:14px;background:var(--bg);cursor:pointer;text-align:left}
+.vbtn img{width:44px;height:55px;object-fit:cover;border-radius:8px;flex:none}
+.vbtn b{display:block;font-size:15.5px;color:var(--ink)}.vbtn small{font-size:13px;color:var(--soft)}
+.vbtn .pl{margin-left:auto;width:32px;height:32px;border-radius:50%;background:var(--dc);display:grid;place-items:center;flex:none}
+.vbtn .pl::before{content:"";border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px}
+.vmodal{position:fixed;inset:0;z-index:20;background:rgba(10,12,20,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+.vmodal video{width:100%;max-width:420px;max-height:76vh;aspect-ratio:4/5;border-radius:16px;background:#000}
+.vmodal .vt{color:#fff;font-weight:700;margin:0 0 10px;font-size:16px}
+.vmodal .vx{margin-top:14px;min-height:48px;min-width:120px;border:0;border-radius:99px;background:#fff;color:#1f2a44;font-weight:700;font-size:16px;cursor:pointer}
+.dom ul{margin:6px 0 0;padding:0;list-style:none}
+.dom li{position:relative;padding:4px 0 4px 22px;font-size:16px}
+.dom li::before{content:"";position:absolute;left:4px;top:14px;width:9px;height:9px;border-radius:50%;background:var(--dc)}
+.toychips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.toychips a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:99px;border:2px solid var(--line);background:var(--card);text-decoration:none;color:var(--ink);font-weight:500;font-size:15px}
+.toychips i{width:12px;height:12px;border-radius:50%}
+.box{border-radius:20px;padding:16px;margin-top:14px}
+.box.warm{background:light-dark(#fff4e0,#3a3020)}
+.box.blue{background:light-dark(#eaf1fb,#1e2a40)}
+.box h2{font-size:23px;margin-bottom:6px}
+.box ul.dot{margin:6px 0;padding:0 0 0 20px}.box ul.dot li{margin:4px 0}
+.times{list-style:none;margin:10px 0;padding:0;counter-reset:x;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.times li{counter-increment:x;background:var(--card);border-radius:14px;padding:8px 8px 8px 58px;position:relative;font-weight:700;font-size:15px;line-height:1.4;min-height:48px;display:flex;align-items:center}
+.times li::before{content:"第" counter(x) "次";position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#fff;background:#3d6fb6;border-radius:8px;padding:3px 0;width:42px;text-align:center;line-height:1.2;white-space:nowrap}
+.res{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:8px 0}
+.res div{background:var(--card);border-radius:14px;padding:10px 14px;font-size:15.5px}
+.res b{display:block}
+.src{font-size:13.5px;color:var(--soft);margin-top:10px}
+.cite{margin-top:22px;font-size:14px;color:var(--soft)}
+.cite a{color:inherit}
+.box.green{background:light-dark(#e8f4ec,#1f3328)}
+.places{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:8px}
+.place{background:var(--card);border-radius:16px;padding:12px 14px}
+.place>b{display:block;font-size:17px;line-height:1.4}
+.place>small{display:block;color:var(--soft);font-size:14px;margin-bottom:4px}
+.place .ln{margin:4px 0;font-size:15.5px;display:flex;gap:10px}
+.place .ln span{flex:none;color:var(--soft);font-size:13.5px;padding-top:2px;width:2.6em}
+.place .ln a{color:var(--ink);font-weight:700}
+.acts{display:flex;gap:8px;margin-top:8px}
+.acts a{flex:1;display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:12px;background:#4f9d69;color:#fff;text-decoration:none;font-weight:700}
+.acts a+a{background:transparent;color:#2f7a4b;border:2px solid #4f9d69}
+@media(min-width:900px){.places{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:600px){.doms{grid-template-columns:repeat(2,minmax(0,1fr))}.times{grid-template-columns:repeat(3,minmax(0,1fr))}.res{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.vid{background:none;padding-top:18px}.vid video{border-radius:22px}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .toy .lay{grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:40px;align-items:start}
+ .vid{position:sticky;top:74px}.body{padding-top:18px}.seg{top:64px}}
+@media(prefers-reduced-motion:reduce){.grid a{transition:none}}
+</style>
+</head>
+<body>
+<div id="home">
+ <header class="hero">
+  <svg class="deco" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+   <circle cx="380" cy="20" r="90" fill="#ffe08a"/><circle cx="-20" cy="290" r="70" fill="#ffbf3a"/>
+   <circle cx="300" cy="270" r="14" fill="#ff8a73" opacity=".7"/><circle cx="40" cy="40" r="8" fill="#5aa7e0" opacity=".7"/>
+   <path d="M210 30l5 10 11 2-8 8 2 11-10-5-10 5 2-11-8-8 11-2z" fill="#fff" opacity=".8"/>
+  </svg>
+  <div class="wrap hgrid">
+   <div class="htext">
+    <span class="tag">玩具的好多種玩法</span>
+    <h1>一起<br class="m">玩玩看！</h1>
+   </div>
+   <svg class="toys" viewBox="0 0 170 170" aria-hidden="true">
+    <ellipse cx="88" cy="160" rx="74" ry="8" fill="#000" opacity=".1"/>
+    <rect x="22" y="104" width="52" height="52" rx="10" fill="#e8574a"/><text x="48" y="140" text-anchor="middle" font-size="30" font-weight="700" fill="#fff" font-family="sans-serif">A</text>
+    <rect x="80" y="104" width="52" height="52" rx="10" fill="#3d82d6"/><text x="106" y="140" text-anchor="middle" font-size="30" font-weight="700" fill="#fff" font-family="sans-serif">B</text>
+    <rect x="50" y="48" width="52" height="52" rx="10" fill="#4fae6a" transform="rotate(-8 76 74)"/><text x="76" y="84" text-anchor="middle" font-size="30" font-weight="700" fill="#fff" font-family="sans-serif" transform="rotate(-8 76 74)">C</text>
+    <circle cx="146" cy="138" r="18" fill="#8a63c9"/><path d="M128 136q18 8 36 0" stroke="#fff" stroke-width="3" fill="none"/>
+    <path d="M118 30l7 14 15 2-11 10 3 15-14-7-14 7 3-15-11-10 15-2z" fill="#fff" stroke="#1f2a44" stroke-width="2.5" stroke-linejoin="round"/>
+   </svg>
+  </div>
+  <div class="wrap">
+   <p class="note">不用很會玩，也不用每次都玩得很成功，<br><b>開心是寶貝願意繼續學習的動力</b></p>
+   <ol class="how">
+    <li><i>1</i><span>選一個<br>玩具</span></li>
+    <li><i>2</i><span>看示範<br>影片</span></li>
+    <li><i>3</i><span>挑玩法<br>試試看</span></li>
+   </ol>
+  </div>
+ </header>
+ <main class="wrap">
+  <a class="gbtn" href="#growth"><span class="gtop"><span class="ic" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 30 30"><path d="M15 27V13" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M15 15c0-6 4-9 10-9 0 6-4 9-10 9zM15 18c0-5-3-8-9-8 0 5 3 8 9 8z" fill="#fff"/></svg></span><span><small class="kick">給家長的參考</small><b>幼兒發展階段</b><small>0～6歲常見的發展、免費發展篩檢、臺東諮詢資源</small></span></span><span class="go">點我進去看<i aria-hidden="true">›</i></span></a>
+  <section class="notice" aria-labelledby="notice-h">
+   <h2 id="notice-h"><span class="nb" aria-hidden="true">!</span>使用前請看</h2>
+   <div class="nrow"><span class="ni" style="--n:#3d82d6" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M8 5v14l11-7z" fill="#fff"/></svg></span><p>影片為動畫示範，玩法和年齡都只是參考，可以依孩子的能力和興趣調整；<b>沒有標準玩法，大家玩得自在最重要。</b></p></div>
+   <div class="nrow"><span class="ni" style="--n:#e2553d" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 3l10 18H2z" fill="#fff"/><path d="M12 10v5" stroke="#e2553d" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="18" r="1.4" fill="#e2553d"/></svg></span><p><b>使用前請先閱讀各玩具包裝上的年齡標示與警語。</b>若對孩子的發展有疑問，歡迎與早期療育相關專業人員討論。<a href="#growth">看臺東可以諮詢的地方 ›</a></p></div>
+  </section>
+  <section class="pick" aria-labelledby="pick-h">
+   <h2 id="pick-h">選一個玩具 <small class="hint">點卡片看玩法和影片</small></h2>
+   <ul class="grid" id="grid"></ul>
+  </section>
+  <section class="tipsec" aria-labelledby="tips-h">
+   <h2 id="tips-h">一起玩的小提醒</h2>
+   <p class="mlead">玩之前看一下，玩起來更輕鬆</p>
+   <ol class="tipgrid" id="tips"></ol>
+  </section>
+  <section class="more" aria-labelledby="more-h">
+   <h2 id="more-h">更多陪伴資源</h2>
+   <p class="mlead">除了玩具示範，我們還有這些服務可以使用</p>
+   <div class="mgrid" id="mgrid"></div>
+  </section>
+ </main>
+</div>
+<div id="growthview" class="gv" hidden>
+ <div class="bar"><div class="wrap"><a class="back" href="#">全部玩具</a><span class="t">幼兒發展階段</span></div></div>
+ <main class="wrap" id="gmain"></main>
+</div>
+<div id="toyview" hidden>
+ <div class="bar"><div class="wrap"><a class="back" href="#">全部玩具</a><span class="dot"></span><span class="t" id="bt"></span></div></div>
+ <main class="toy" id="toy"></main>
+</div>
+<div class="vmodal" id="vmodal" hidden role="dialog" aria-modal="true" aria-label="影片"><p class="vt" id="vtitle"></p><video id="vplayer" controls playsinline preload="none"></video><button type="button" class="vx" id="vclose">關閉</button></div>
+<footer>
+ <div class="wrap"><div><p>一起玩玩看！</p></div></div>
+</footer>
+<script>
+{
+// ===== 內容來源：Google 試算表 =====
+// 把試算表網址中 /d/ 和 /edit 之間那一串填在下面的引號裡；留空就使用網頁內建的內容。
+const SHEET_ID = '1TuyGtWfugJO0O-8fbNZwqwu6vA6rgclc5_Mhm2mBG7U';
+const FALLBACK = {"toys": [{"id": "magnetbook", "name": "磁鐵書", "sub": "動物／123", "color": "#F29A1F", "dark": "#9A5A00", "photo": "magnetbook.jpg", "intro": "書頁是可以吸住磁鐵的場景，每本附30片以上的磁鐵貼片，可以拿下來、貼上去、換位置。", "skills": ["手指精細動作", "認識詞彙", "數數與說故事"], "small": [["撕下來、貼上去", "大人先示範把磁鐵拿起來再貼回去，讓孩子用手掌拍，再試著用手指捏。"], ["指一指、說名字", "孩子貼一片，大人就說出名稱和聲音，例如「小狗，汪汪！」"], ["找一找", "問孩子「長頸鹿在哪裡？」讓孩子用手指出來，找到了一起拍拍手。"]], "big": [["一起編故事", "「小貓要去哪裡？誰跟牠一起去？」讓孩子移動磁鐵，把故事演出來。"], ["數一數、配一配", "用123磁鐵書，把數字和一樣多的圖片放在一起，例如「3」旁邊放3顆蘋果。"], ["我說你貼", "大人出題「把2隻動物放在樹下」，再換孩子出題考大人。"]], "talk": ["你把小狗放在草地上了！", "小鳥要飛去哪裡呢？", "我們來數數看，一、二、三！"], "more": "磁鐵也能貼在冰箱或鐵製餅乾盒上，換個地方就是新遊戲；每次只拿出幾片，玩完再換另一組。", "safety": "磁鐵片小，小小孩玩時大人要全程在旁，避免放進嘴巴；玩完點一點數量，收回書裡。"}, {"id": "stones", "name": "音樂跳跳石", "sub": "Stepping Stone", "color": "#3D82D6", "dark": "#1D4F8F", "photo": "stones.jpg", "intro": "五種顏色的石頭，踩上去會發光、發出不同的琴音，底部有防滑設計。", "skills": ["平衡與大肌肉", "認識顏色", "聽指令與記順序"], "small": [["牽手踩踩看", "石頭排成一直線、間隔小一點，大人牽著孩子一步一步踩，聽聽每顆的聲音。"], ["用手拍一拍", "還走不穩的孩子，可以坐著用手壓石頭，看燈亮、聽音樂。"], ["說出顏色", "踩到哪一顆，大人就說「紅色！」「藍色！」，慢慢孩子會跟著說。"]], "big": [["聽顏色跳", "大人喊「藍色」，孩子就跳到藍色石頭上；也可以換孩子當發號司令的人。"], ["記住順序", "大人先踩「紅、黃、綠」，孩子照順序再踩一次，會了再慢慢加長。"], ["過河遊戲", "把石頭排成過河的路，地板是「河水」，從這一邊走到另一邊。"]], "talk": ["你踩到黃色，有音樂耶！", "下一顆要踩哪個顏色？", "慢慢來，我牽著你。"], "more": "每次換一種排法：直線、彎彎曲曲、圍成圓圈；也可以跟著兒歌的節奏踩。", "safety": "包裝標示3歲以上。請放在不滑的地面、周圍清空，間距依孩子能力調整，大人在旁保護。"}, {"id": "puzzle", "name": "幼兒2片拼圖卡", "sub": "日常篇", "color": "#6BAA2C", "dark": "#3E6B12", "photo": "puzzle.jpg", "intro": "每張圖卡分成兩片，拼起來就是一樣生活用品，例如鍋子、杯子、洗髮精。", "skills": ["手眼協調", "認識生活用品", "配對與表達"], "small": [["兩片合起來", "先拿出2～3組，大人示範把兩片推在一起：「喀！變成杯子了！」"], ["找找真的東西", "拼好杯子卡，帶孩子去拿家裡真的杯子，放在一起比一比。"], ["一邊拼一邊說", "拼好後說說用途：「洗澡的時候會用洗髮精。」"]], "big": [["打散找另一半", "一次拿出5組以上打散，讓孩子自己找出可以拼在一起的兩片。"], ["分一分類", "廚房用的、洗澡用的、吃飯用的，各放成一堆，說說為什麼這樣分。"], ["說說用途", "抽一張卡，說出「這個什麼時候用？」或用動作演出來讓大家猜。"]], "talk": ["你找到杯子的另一半了！", "這個在家裡的哪裡？", "我們洗頭的時候會用到它。"], "more": "把卡片和生活作息連在一起：吃飯前拼碗、洗澡前拼洗髮精，拼好就去做那件事。", "safety": "紙卡避免沾水和啃咬；每次只拿出需要的數量，玩完收回盒子，比較不會遺失。"}, {"id": "snowflake", "name": "雪花片積木", "sub": "240片", "color": "#E2536E", "dark": "#9C2340", "photo": "snowflake.jpg", "intro": "圓形的雪花片邊緣有缺口，兩片對準缺口就能插在一起，可以拼出各種造型。", "skills": ["手指力氣與雙手協調", "顏色分類", "想像與創作"], "small": [["顏色分一分", "拿出少量雪花片，大人陪著把同顏色的放進同一個碗裡。"], ["大人插、孩子看", "大人插出一朵花或一個圈圈，讓孩子看、摸、搖一搖。"], ["一起收回家", "「紅色回家囉！」一片一片放回盒子，收完把蓋子蓋好。"]], "big": [["插成一條長龍", "兩片對準缺口插起來，一片接一片，比比看誰的長龍比較長。"], ["照著圖做做看", "參考盒子上的圖，試著做出花朵、風車或小人。"], ["介紹我的作品", "請孩子說說「這是什麼？它會做什麼？」大人用心聽、跟著問。"]], "talk": ["你把兩片插起來了，好有力氣！", "這條長龍有幾種顏色？", "告訴我，你做的是什麼？"], "more": "每次給一個小主題：今天做「動物」、明天做「交通工具」；作品拍照留念再拆掉。", "safety": "包裝標示3歲以上，含小零件；未滿3歲只在大人全程陪同下少量使用，玩完立刻收好。"}, {"id": "letters", "name": "字母數字方塊", "sub": "A–Z、0–9、＋－×÷", "color": "#8A63C9", "dark": "#583592", "photo": "letters.jpg", "intro": "一盒透明彩色的磁力方塊，裡面有磁鐵，靠近就會互相吸住；上面有英文字母、數字和加減乘除符號，可以排列、配對、組成算式。", "skills": ["認識字母與數字", "排序與比較", "簡單加減"], "small": [["找找看顏色", "拿出幾塊，一起找「紫色在哪裡？」找到了就拿起來摸一摸。"], ["排成小火車", "把方塊一塊接一塊吸在一起排成一列，「嘟嘟～火車要出發了！」"], ["拿出來、放回去", "把方塊放回鐵盒的格子裡，練習用手指拿取和對準。"]], "big": [["數字排排隊", "把數字打散，請孩子照1、2、3……的順序排好。"], ["簡單算式", "排出「2＋1」，再用小積木或餅乾數數看，最後找出答案的方塊。"], ["拼出名字", "找出孩子名字的英文字母，或拼出MAMA、DAD等簡單的字。"]], "talk": ["你找到數字3了！", "這是A，蘋果apple的A。", "2加1，我們拿積木數數看。"], "more": "字母數字尋寶：把幾塊藏在房間裡，找到後說出它的名字或念出數字。", "safety": "方塊小又含磁鐵，3歲以下要大人全程在旁；若方塊破裂、磁鐵外露，請立即收起停用，誤吞磁鐵非常危險。玩完數一數再收回鐵盒。"}, {"id": "tiles", "name": "磁力片", "sub": "MNTL 36片", "color": "#1E9C8E", "dark": "#0E5E55", "photo": "tiles.jpg", "intro": "透明彩色的方形、三角形片片，邊緣有磁鐵，靠近就會「喀」一聲吸住，可以平面拼圖也能立體搭建。", "skills": ["空間概念", "認識形狀", "動腦解決問題"], "small": [["疊高再推倒", "把方形一片一片疊高，再推倒重來，孩子會很喜歡這種因果遊戲。"], ["透光看顏色", "拿起來對著窗戶，看看地上的彩色影子，說說是什麼顏色。"], ["吸一吸", "讓孩子拿兩片慢慢靠近，感受磁鐵「喀」一聲吸住。"]], "big": [["蓋一間房子", "正方形當牆壁、三角形當屋頂，蓋好還可以放小玩偶進去住。"], ["做一個盒子", "用6片正方形圍成一個立方體，邊做邊數「第幾片了？」"], ["拼平面圖案", "在地上拼出星星、花朵、火箭，再請孩子幫作品取名字。"]], "talk": ["你用三角形做屋頂了！", "要幾片才能圍成一個盒子？", "倒下來了，我們再試一次！"], "more": "放進小玩偶變成「動物的家」，或在陽光下玩光影，同一盒磁力片可以有很多玩法。", "safety": "包裝標示3歲以上；若片片破裂、磁鐵外露，請立即停止使用並收起，磁鐵誤吞非常危險。"}, {"id": "softblocks", "name": "馬卡龍軟積木", "sub": "43顆＋收納車", "color": "#C1609E", "dark": "#7E2F66", "photo": "softblocks.jpg", "intro": "軟軟的馬卡龍色積木，有方塊、圓柱、拱門等形狀，可以疊高、組合；附一台有輪子的收納車，玩完可以把積木載回家。", "skills": ["抓握與手眼協調", "空間概念", "收拾的好習慣"], "small": [["捏一捏、壓一壓", "積木軟軟的，讓孩子用手抓、捏、壓，感受軟軟的觸感，大人在旁邊說「軟軟的！」"], ["疊高再推倒", "大人疊兩三塊，讓孩子推倒，「嘩～倒了！」再一起疊回去，玩很多次也沒關係。"], ["一起裝進車子", "把積木一塊一塊放進收納車，「積木坐車囉！」收拾就變成遊戲。"]], "big": [["疊一座高塔", "照顏色一塊一塊疊上去，邊疊邊數「第幾塊了？」看看可以疊多高。"], ["推車送貨去", "把積木裝上車，推到房間另一邊「送貨」，送到了再一塊塊拿出來。"], ["蓋一間房子", "用方塊當牆壁、拱門當大門，蓋好後請孩子介紹「誰住在這裡？」"]], "talk": ["軟軟的，捏起來好舒服！", "你疊了3塊，好高喔！", "積木要坐車回家囉！"], "more": "收納車可以載積木、也可以載娃娃或小車子；收拾的時候比賽「誰先裝滿一車」，收拾也變好玩。", "safety": "軟積木摔到不會痛，但小小孩可能會咬，請注意有沒有破損或掉屑；髒了用清水洗淨、完全晾乾再收。"}, {"id": "bubbles", "name": "泡泡棒", "sub": "口袋型", "color": "#D99A00", "dark": "#865C00", "photo": "bubbles.jpg", "intro": "小小一支的口袋型泡泡棒，拿出圈圈輕輕一吹就有好多泡泡，在戶外、陽台都可以玩。", "skills": ["吹氣與嘴巴動作", "眼睛追著看", "輪流與等待"], "small": [["看泡泡飛", "大人吹泡泡，讓孩子看泡泡往上飛、往旁邊飄，一起說「泡泡飛高高！」"], ["戳破泡泡", "讓孩子伸手指戳泡泡、用手拍泡泡，「啵！」破掉了再吹一次。"], ["一起倒數", "吹之前一起數「一、二、三，吹！」孩子會很期待下一次。"]], "big": [["自己吹吹看", "嘴巴嘟起來、輕輕慢慢地吹，吹太用力泡泡會破，多試幾次就會了。"], ["吹一個大泡泡", "很慢很慢地吹，看泡泡越變越大，比比看誰的泡泡比較大。"], ["輪流吹泡泡", "你吹一次、我吹一次，等待的人負責戳泡泡，練習輪流和等待。"]], "talk": ["哇，好多泡泡！", "泡泡飛到哪裡去了？", "嘴巴嘟起來，輕輕吹～"], "more": "換個地方吹：在陽光下看泡泡上的彩虹顏色、對著風吹、用扇子搧泡泡，同一支泡泡棒每次都有新發現。", "safety": "泡泡水不能喝，先教孩子「吹氣，不要吸」；泡泡水滴到地上會滑，盡量在戶外玩；沾到眼睛請用清水沖洗。"}, {"id": "ufoball", "name": "飛碟球", "sub": "變形彈跳球", "color": "#4E5BC4", "dark": "#2A3487", "photo": "ufoball.jpg", "intro": "用腳踩一下就會變成扁扁的飛碟，過幾秒「砰」一聲彈回圓圓的球；也可以像一般的球一樣丟、滾、踢。", "skills": ["大肌肉與平衡", "反應與手眼協調", "等待與輪流"], "small": [["滾來滾去", "大人和孩子面對面坐著，把球滾過去、再滾回來，「球來囉！」"], ["踩扁變飛碟", "大人示範用腳把球踩扁，一起等它「砰」地跳起來，孩子會笑得好開心。"], ["追球撿球", "把球輕輕滾遠一點，讓孩子走過去、爬過去把球撿回來。"]], "big": [["丟出飛碟", "把踩扁的飛碟往空地丟，看它在空中或地上「砰」變回球，再跑去撿。"], ["踢球進門", "用兩張椅子或兩個枕頭當球門，練習把球踢進去。"], ["猜猜幾秒會跳", "踩扁之後一起數「1、2、3……」，猜猜看數到幾會跳起來。"]], "talk": ["球滾過來囉，換你滾給我！", "踩扁了！猜猜什麼時候會跳？", "3、2、1，砰！"], "more": "把飛碟當成「飛盤」玩、比賽誰的球跳最高，或在公園草地上玩，同一顆球有很多種玩法。", "safety": "請在空曠的地方玩，不要對著別人的臉丟；球彈開時會突然跳起來，臉不要靠太近；踩球時大人在旁邊扶著，避免滑倒。"}], "principles": [["跟著孩子的興趣走", "先看孩子想怎麼玩，再加一點點變化，不急著教「正確玩法」。"], ["少考試，多描述", "把「這是什麼？」換成「你把紅色放上去了！」孩子會更願意說話。"], ["一次只拿出一點點", "5～10片就夠，東西太多反而容易分心、亂丟。"], ["同一樣教具換著玩", "今天照顏色玩、明天數數玩，玩過的玩法隔幾天再拿出來，孩子又會覺得新鮮。"], ["一起收拾也是遊戲", "邊數邊收、照顏色收，收好了就是遊戲的結尾。"]], "domains": [["body", "身體動一動", "大動作", "抬頭、翻身、坐、爬、走、跑、跳，用整個身體的力氣和平衡。"], ["hand", "小手做做看", "精細動作", "抓、捏、疊、畫、扣釦子，手指頭越來越靈巧。"], ["talk", "說話和想想", "語言與認知", "聽懂大人的話、說出想法，也包括觀察、記住和解決問題。"], ["life", "生活和朋友", "生活自理與社會", "吃飯、穿衣、表達心情，還有和家人、小朋友相處。"]], "growth": [{"id": "g0", "label": "0～1歲", "items": {"body": ["趴著時能把頭抬起來", "會翻身，慢慢可以自己坐穩", "開始爬，扶著東西站起來"], "hand": ["小手從握拳變成常常打開", "會伸手抓東西、換到另一隻手", "會拍手、拿東西敲一敲"], "talk": ["聽到聲音會轉頭去找", "發出「ㄅㄚ」「ㄇㄚ」這類聲音", "大人跟他說話時，會用聲音回應"], "life": ["看到熟悉的人會笑", "開始分得出熟人和陌生人", "會用哭聲、表情告訴大人需要"]}, "toys": ["softblocks", "bubbles"]}, {"id": "g1", "label": "1～2歲", "items": {"body": ["自己走路，越走越穩", "會蹲下撿東西再站起來", "扶著欄杆爬樓梯"], "hand": ["能把2塊積木疊起來", "拿筆亂畫、一頁一頁翻書", "會打開盒蓋、把東西放進去"], "talk": ["會說一些單字，例如「爸爸」「車車」", "能指出眼睛、鼻子等身體部位", "模仿動物叫聲或簡單的聲音"], "life": ["叫他的名字會看過來或回應", "穿衣服時會把手伸出來", "會模仿大人用杯子、湯匙"]}, "toys": ["softblocks", "puzzle", "magnetbook", "ufoball", "bubbles"]}, {"id": "g2", "label": "2～3歲", "items": {"body": ["雙腳一起跳離地面", "不太需要扶就能上下樓梯", "會把球丟出去、踢球"], "hand": ["能疊高好幾塊積木", "會模仿畫直線、畫圈圈", "用湯匙自己吃飯，掉得越來越少"], "talk": ["會說兩三個字的短句", "聽得懂簡單的指令，例如「把鞋子拿來」", "會把不同玩具組合起來玩"], "life": ["開始玩假裝遊戲，例如餵娃娃吃飯", "會說「我要」「不要」表達想法", "對其他小朋友感到好奇"]}, "toys": ["puzzle", "magnetbook", "softblocks", "ufoball", "bubbles"]}, {"id": "g3", "label": "3～4歲", "items": {"body": ["單腳站一下下", "兩隻腳輪流上樓梯", "會騎三輪車"], "hand": ["會畫圓圈", "開始練習用剪刀", "會扣大顆的釦子"], "talk": ["會說比較長的句子", "常常問「為什麼？」", "說得出自己的名字和年紀"], "life": ["會和小朋友輪流玩", "喜歡玩扮家家酒", "自己穿脫簡單的衣服"]}, "toys": ["stones", "snowflake", "tiles", "letters", "puzzle"]}, {"id": "g4", "label": "4～5歲", "items": {"body": ["會單腳跳", "接住彈過來的球", "跑步時會轉彎、停下來"], "hand": ["會模仿畫十字、方形", "畫得出有頭、有身體的人", "會照著線剪紙"], "talk": ["會說一件事情的經過", "認得常見的顏色", "會數數、比較多和少"], "life": ["願意遵守遊戲規則", "大多可以自己上廁所", "會說出自己的心情，例如「我生氣了」"]}, "toys": ["snowflake", "tiles", "letters", "stones", "ufoball"]}, {"id": "g5", "label": "5～6歲", "items": {"body": ["連續單腳跳好幾下", "腳跟接腳尖走直線", "開始學跳繩、拍球"], "hand": ["會畫三角形", "寫出自己名字裡的一些字", "自己刷牙、穿襪子"], "talk": ["說話完整、別人聽得懂", "能照著大人的話拿對東西", "說得出事情的先後順序"], "life": ["會和朋友一起合作完成一件事", "大部分生活小事可以自己做", "懂得等待和排隊"]}, "toys": ["letters", "tiles", "snowflake", "ufoball"]}], "watch": ["原本已經會的事情，突然不會了（例如本來會說的話不說了）", "和同年齡的孩子比，有好幾項都還做不到", "叫他的名字很少有反應，也很少看著人", "照顧的人心裡一直覺得「好像怪怪的」"], "screen": {"times": ["6～10個月", "10個月～1歲6個月", "1歲6個月～2歲", "2～3歲", "3～5歲", "5歲～未滿7歲"], "areas": ["粗大動作", "精細動作", "語言認知", "社會發展"]}, "places": [{"name": "臺灣兒童發展早期療育協會", "unit": "台東辦事處（臺東縣早期療育通報個管中心、兒童發展療育中心）", "addr": "950臺東市更生北路69號2樓（兒少家庭館內）", "tel": "089-236531", "note": "發展諮詢、通報轉介、療育資源與補助申請協助", "map": "臺東市更生北路69號 兒少家庭館", "web": "https://www.tacdei.org.tw/"}, {"name": "臺東馬偕紀念醫院", "unit": "兒童發展聯合評估中心", "addr": "臺東市長沙街303巷1號（恩典樓3樓）", "tel": "089-351642", "note": "評估日請帶孩子的健保卡", "map": "台東馬偕紀念醫院", "web": "https://ttw3.mmh.org.tw/departmain3.php?id=154"}, {"name": "臺東基督教醫院", "unit": "兒童發展聯合評估中心", "addr": "臺東市開封街350號", "tel": "089-960115", "note": "", "map": "台東基督教醫院 開封街350號", "web": ""}], "more": [{"name": "陪孩子走這一段路", "desc": "給照顧者的陪伴小知識，遇到育兒的難題時可以來看看", "btn": "前往網站", "url": "https://taitungparentingcenter.github.io/SLOW/", "color": "#e07a3f", "kind": "網站", "qr": ""}, {"name": "臺東親子活動", "desc": "依市區、海線、縱谷線、南迴線，找離家近的親子活動", "btn": "找活動", "url": "https://taitungparentingcenter.github.io/SLOWPROJECT/#city", "color": "#3d82d6", "kind": "網站", "qr": ""}, {"name": "臺東縣居家賦能計畫", "desc": "加入官方LINE，有問題可以直接詢問，也能收到最新消息", "btn": "加入LINE好友", "url": "https://lin.ee/zpl0WwJ", "color": "#06c755", "kind": "LINE", "qr": "line-qr.png"}]};
+
+function parseCSV(text) {
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; }
+      else cur += c;
+    } else if (c === '"') q = true;
+    else if (c === ',') { row.push(cur); cur = ''; }
+    else if (c === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
+    else if (c !== '\r') cur += c;
+  }
+  if (cur || row.length) { row.push(cur); rows.push(row); }
+  const head = rows.shift() || [];
+  return rows.filter(r => r.some(v => v.trim())).map(r => Object.fromEntries(head.map((h, k) => [h.trim(), (r[k] || '').trim()])));
+}
+async function tab(name) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(name);
+  return parseCSV(await r.text());
+}
+const split = s => (s || '').split(/[、,，]/).map(x => x.trim()).filter(Boolean);
+async function loadData() {
+  if (!SHEET_ID) return FALLBACK;
+  try {
+    const [toys, tips, dev, ageToys, places, more] = await Promise.all(['玩具', '小提醒', '發展階段', '年齡推薦玩具', '諮詢資源', '陪伴資源'].map(tab));
+    const D = Object.assign({}, FALLBACK);
+    if (toys.length) D.toys = toys.filter(r => r['顯示'] !== '否' && r['代號']).map(r => ({
+      id: r['代號'], name: r['名稱'], sub: r['副標'], color: r['主色'] || '#3d82d6', dark: r['深色'] || r['主色'] || '#1d4f8f',
+      photo: r['照片檔名'], video: r['影片檔名'], intro: r['介紹'], skills: split(r['練習能力（用、分隔）']),
+      small: [1, 2, 3].map(k => [r[`小小孩玩法${k}標題`], r[`小小孩玩法${k}說明`]]).filter(x => x[0]),
+      big: [1, 2, 3].map(k => [r[`大小孩玩法${k}標題`], r[`大小孩玩法${k}說明`]]).filter(x => x[0]),
+      talk: [1, 2, 3].map(k => r[`可以這樣說${k}`]).filter(Boolean), more: r['讓它不只玩一次'], safety: r['安全提醒']
+    }));
+    if (tips.length) D.principles = tips.sort((a, b) => (+a['順序'] || 0) - (+b['順序'] || 0)).map(r => [r['標題'], r['說明']]);
+    if (dev.length) {
+      const order = [], G = {};
+      dev.forEach(r => {
+        const id = r['年齡代號']; if (!id) return;
+        if (!G[id]) { G[id] = {id, label: r['年齡'], items: {}, videos: {}, toys: []}; order.push(id); }
+        G[id].items[r['面向代號']] = [r['能力1'], r['能力2'], r['能力3']].filter(Boolean);
+        G[id].videos[r['面向代號']] = r['影片檔名'];
+      });
+      ageToys.forEach(r => { if (G[r['年齡代號']]) G[r['年齡代號']].toys = split(r['推薦玩具代號（用、分隔）']); });
+      D.growth = order.map(id => G[id]);
+      D.growth.forEach(g => FALLBACK.domains.forEach(([k]) => { g.items[k] = g.items[k] || []; }));
+    }
+    if (places.length) D.places = places.map(r => ({name: r['名稱'], unit: r['單位'], addr: r['地址'], tel: r['電話'], note: r['說明'], map: r['地圖搜尋文字'] || r['地址'], web: r['網站']}));
+    if (more.length) D.more = more.map(r => ({name: r['名稱'], desc: r['說明'], btn: r['按鈕文字'] || '前往', url: r['連結'], color: r['顏色'] || '#3d82d6', kind: r['類型（網站／LINE）'] === 'LINE' ? 'LINE' : '網站', qr: r['QR圖檔']}));
+    return D;
+  } catch (e) { return FALLBACK; }
+}
+
+function start(DATA) {
+const T = DATA.toys, $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let age = 'small';
+try { age = localStorage.getItem('age') || 'small'; } catch (e) {}
+
+$('grid').innerHTML = T.map(t => `<li><a href="#${t.id}" style="--c:${t.color}"><img src="img/${t.photo || t.id + '.jpg'}" alt="" loading="lazy"><span class="nm"><span>${esc(t.name)}<small>${esc(t.sub)}</small></span><i class="play" aria-hidden="true"></i></span></a></li>`).join('');
+const TC = ['#e8574a', '#3d82d6', '#d19a12', '#4fae6a', '#8a63c9'];
+$('tips').innerHTML = DATA.principles.map((p, i) => `<li style="--tc:${TC[i % 5]}"><span class="tn">${i + 1}</span><div><b>${esc(p[0])}</b><p>${esc(p[1])}</p></div></li>`).join('');
+
+$('mgrid').innerHTML = (DATA.more || []).map(m => {
+  const icon = m.kind === 'LINE'
+    ? '<svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 5C9.4 5 4 9.3 4 14.6c0 4.7 4.3 8.7 10.1 9.4.4.1.9.3 1 .6.1.3.1.8 0 1.1l-.2 1c0 .3-.2 1.2 1.1.6s7-4.1 9.5-7.1C27.2 18.3 28 16.5 28 14.6 28 9.3 22.6 5 16 5z" fill="#fff"/></svg>'
+    : /活動|地圖|地點/.test(m.name + m.btn) ? '<svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 4a8 8 0 0 0-8 8c0 6 8 15 8 15s8-9 8-15a8 8 0 0 0-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" fill="#fff"/></svg>'
+    : '<svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 27s-10-6.2-10-13a5.5 5.5 0 0 1 10-3.2A5.5 5.5 0 0 1 26 14c0 6.8-10 13-10 13z" fill="#fff"/></svg>';
+  const inner = `<span class="mi" aria-hidden="true">${icon}</span><span class="mt"><b>${esc(m.name)}</b><small>${esc(m.desc)}</small></span>`;
+  if (m.kind === 'LINE') return `<div class="mc line" style="--m:${esc(m.color)}">${inner}${m.qr ? `<img class="qr" src="img/${esc(m.qr)}" alt="${esc(m.name)} QR code">` : ''}<a class="mgo" href="${esc(m.url)}" target="_blank" rel="noopener">${esc(m.btn)} ›</a></div>`;
+  return `<a class="mc" style="--m:${esc(m.color)}" href="${esc(m.url)}" target="_blank" rel="noopener">${inner}<span class="mgo">${esc(m.btn)} ›</span></a>`;
+}).join('');
+
+const steps = a => a.map(s => `<li><b>${esc(s[0])}</b><p>${esc(s[1])}</p></li>`).join('');
+
+function showToy(i) {
+  const t = T[i], prev = T[(i + T.length - 1) % T.length], next = T[(i + 1) % T.length];
+  const v = $('toyview');
+  v.style.setProperty('--c', t.color);
+  $('bt').textContent = t.name;
+  $('toy').innerHTML = `
+  <div class="wrap lay">
+   <div class="vid"><video controls playsinline preload="none" poster="img/${t.id}-poster.jpg" src="videos/${t.video || t.id + '.mp4'}" aria-label="${esc(t.name)}示範影片"></video></div>
+   <div class="body">
+    <h1>${esc(t.name)}</h1>
+    <div class="sub">${esc(t.sub)}</div>
+    <p>${esc(t.intro)}</p>
+    <ul class="skills">${t.skills.map(s => `<li>${esc(s)}</li>`).join('')}</ul>
+    <p class="tnote"><b>!</b>玩法和年齡只是參考，可依孩子的能力和興趣調整。使用前請先看包裝上的年齡標示與警語。</p>
+    <section class="ages" aria-label="玩法">
+    <div class="seg" role="group" aria-label="選擇孩子年齡">
+     <button type="button" data-age="small"><b>小小孩</b><small>約1～3歲</small></button>
+     <button type="button" data-age="big"><b>大小孩</b><small>約3～6歲</small></button>
+    </div>
+    <ol class="steps" id="steps"></ol>
+    </section>
+    <p class="h3">玩的時候可以這樣說</p>
+    <div class="say">${t.talk.map(s => `<div>${esc(s)}</div>`).join('')}</div>
+    <div class="note more"><b>讓它不只玩一次</b><p>${esc(t.more)}</p></div>
+    <div class="note safe"><b>安全提醒</b><p>${esc(t.safety)}</p></div>
+    <nav class="pn" aria-label="其他玩具">
+     <a href="#${prev.id}"><small>‹ 上一個</small>${esc(prev.name)}</a>
+     <a class="nx" href="#${next.id}"><small>下一個 ›</small>${esc(next.name)}</a>
+    </nav>
+    <a class="all" href="#">回到全部玩具</a>
+    <a class="gbtn" href="#growth"><span class="gtop"><span class="ic" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 30 30"><path d="M15 27V13" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M15 15c0-6 4-9 10-9 0 6-4 9-10 9zM15 18c0-5-3-8-9-8 0 5 3 8 9 8z" fill="#fff"/></svg></span><span><small class="kick">給家長的參考</small><b>幼兒發展階段</b><small>0～6歲常見的發展、免費發展篩檢、臺東諮詢資源</small></span></span><span class="go">點我進去看<i aria-hidden="true">›</i></span></a>
+   </div>
+  </div>`;
+  const setAge = a => {
+    age = a;
+    try { localStorage.setItem('age', a); } catch (e) {}
+    $('steps').innerHTML = steps(a === 'big' ? t.big : t.small);
+    $('toy').querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.age === a));
+  };
+  $('toy').querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => setAge(b.dataset.age)));
+  setAge(age);
+}
+
+const byId = Object.fromEntries(T.map(t => [t.id, t]));
+const DC = {body: '#e07a3f', hand: '#d6a21e', talk: '#3d82d6', life: '#c1609e'};
+let gsel = 'g0';
+try { gsel = localStorage.getItem('gsel') || 'g0'; } catch (e) {}
+function showGrowth() {
+  const S = DATA.screen;
+  $('gmain').innerHTML = `
+  <h1>幼兒發展階段</h1>
+  <p class="lead2">每個孩子都有自己的步調。下面寫的是這個年紀「常見」的樣子。若對照後，孩子現階段能力有所差異，請先行跟你的社工討論，或是前往臺東的<a href="https://www.tacdei.org.tw/" target="_blank" rel="noopener">臺灣兒童發展早期療育協會</a>進行諮詢（聯絡方式在下方）。</p>
+  <section aria-label="各年齡發展">
+  <div class="chips" role="group" aria-label="選擇年齡">${DATA.growth.map(g => `<button type="button" data-g="${g.id}">${g.label}</button>`).join('')}</div>
+  <div id="gbody"></div>
+  </section>
+  <section class="box warm">
+   <h2>什麼時候可以找人聊聊？</h2>
+   <p>如果有下面這些情形，可以先問問兒科醫師，或帶孩子做免費的發展篩檢。早一點了解，就能早一點得到幫助。</p>
+   <ul class="dot">${DATA.watch.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
+  </section>
+  <section class="box green" id="local-sec">
+   <h2>臺東可以諮詢的地方</h2>
+   <div class="places">${DATA.places.map(p => `<div class="place"><b>${esc(p.name)}</b>${p.unit ? `<small>${esc(p.unit)}</small>` : ''}
+    <p class="ln"><span>地址</span>${esc(p.addr)}</p>
+    <p class="ln"><span>電話</span><a href="tel:${p.tel.replace(/[^0-9]/g, '')}">${esc(p.tel)}</a></p>
+    ${p.note ? `<p class="ln"><span>說明</span>${esc(p.note)}</p>` : ''}
+    <div class="acts"><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.map)}" target="_blank" rel="noopener">地圖</a>${p.web ? `<a href="${p.web}" target="_blank" rel="noopener">網站</a>` : ''}</div></div>`).join('')}</div>
+   <p class="src">聯絡資訊查詢自各單位官網及衛福部社家署「發展遲緩兒童通報暨個案管理服務網」（2026年11月）。前往前建議先打電話確認時間。</p>
+  </section>
+  <section class="box blue">
+   <h2>7歲以前，有6次免費發展篩檢</h2>
+   <p>0～6歲是孩子發展很重要的時候，尤其是3歲以前。從113年7月1日起，有健保的未滿7歲孩子，可以在下面6個階段，各做1次政府補助的兒童發展篩檢：</p>
+   <ol class="times">${S.times.map(x => `<li>${esc(x)}</li>`).join('')}</ol>
+   <p><b>醫師會看這4個面向：</b>${S.areas.map(esc).join('、')}。</p>
+   <div class="res">
+    <div><b>結果「通過」或需要「衛教、追蹤」</b>醫師會說明怎麼在家幫孩子，之後照時間繼續做下一次篩檢。</div>
+    <div><b>結果「需要轉介」</b>醫師會轉介到兒童發展聯合評估中心，做更完整的評估。</div>
+   </div>
+   <p><b>去哪裡做：</b>住家附近有提供兒童發展篩檢服務的院所，可以用國健署的「兒童就醫地圖」查詢；也可以搭配兒童預防保健一起做。</p>
+   <p><b>記得帶：</b>兒童健康手冊、健保卡。</p>
+   <p><b>平常可以做的事：</b>多觀察孩子的發展，並填寫兒童健康手冊裡的「家長紀錄事項」，特別留意有紅字※號的題目，那些就是發展篩檢會看的項目。</p>
+   <p class="src">資料來源：衛生福利部國民健康署《兒童發展篩檢懶人包》（2024）。本頁以文字重新整理，未轉載原手冊圖片。</p>
+  </section>
+  <div class="cite">
+   <p>參考資料：</p>
+   <p>兒福聯盟〈<a href="https://www.children.org.tw/news/news_detail/child-development-stages" target="_blank" rel="noopener">兒童發展總整理：輕鬆掌握0～6歲指標、評估與家長照顧重點</a>〉；衛生福利部國民健康署《兒童發展篩檢懶人包》（2024）及兒童健康手冊。</p>
+   <p>本頁發展指標由本網站參考上述資料，以自己的文字重新整理撰寫，並非原文轉載，也未使用原有圖片。內容僅供參考，不能取代醫師或專業人員的評估。</p>
+  </div>
+  <a class="all" href="#">回到全部玩具</a>`;
+  const setG = id => {
+    gsel = id;
+    try { localStorage.setItem('gsel', id); } catch (e) {}
+    const g = DATA.growth.find(x => x.id === id) || DATA.growth[0];
+    $('gbody').innerHTML = `<div class="doms">${DATA.domains.map(([k, name, pro, desc]) => `<div class="dom" style="--dc:${DC[k]}"><h3>${esc(name)}<small>${esc(pro)}</small></h3><ul>${g.items[k].map(x => `<li>${esc(x)}</li>`).join('')}</ul><button type="button" class="vbtn" data-v="videos/dev/${(g.videos && g.videos[k]) || g.id + '_' + k + '.mp4'}" data-t="${esc(g.label)}・${esc(name)}"><img src="videos/dev/${g.id}_${k}-poster.jpg" alt=""><span><b>看影片</b><small>約30秒</small></span><i class="pl" aria-hidden="true"></i></button></div>`).join('')}</div>
+    <p class="h3">這個年紀可以一起玩</p>
+    <div class="toychips">${g.toys.filter(id => byId[id]).map(id => `<a href="#${id}"><i style="background:${byId[id].color}"></i>${esc(byId[id].name)}</a>`).join('')}</div>`;
+    $('gmain').querySelectorAll('.chips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.g === g.id));
+    $('gbody').querySelectorAll('.vbtn').forEach(b => b.addEventListener('click', () => openV(b.dataset.v, b.dataset.t, b)));
+  };
+  $('gmain').querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => setG(b.dataset.g)));
+  setG(gsel);
+}
+
+let vfrom = null;
+function openV(src, title, from) {
+  vfrom = from;
+  $('vtitle').textContent = title;
+  const v = $('vplayer'); v.src = src; v.poster = src.replace('.mp4', '-poster.jpg');
+  $('vmodal').hidden = false; document.body.style.overflow = 'hidden';
+  $('vclose').focus();
+  try { const p = v.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+}
+function closeV() {
+  const v = $('vplayer'); v.pause(); v.removeAttribute('src'); v.load();
+  $('vmodal').hidden = true; document.body.style.overflow = '';
+  if (vfrom) vfrom.focus();
+}
+$('vclose').addEventListener('click', closeV);
+$('vmodal').addEventListener('click', e => { if (e.target === $('vmodal')) closeV(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('vmodal').hidden) closeV(); });
+window.addEventListener('hashchange', () => { if (!$('vmodal').hidden) closeV(); });
+
+let last = null;
+function route() {
+  const id = location.hash.slice(1);
+  const i = T.findIndex(t => t.id === id);
+  document.querySelectorAll('video').forEach(v => v.pause());
+  $('growthview').hidden = true;
+  if (id === 'growth') {
+    $('home').hidden = true; $('toyview').hidden = true; $('growthview').hidden = false;
+    showGrowth(); document.title = '幼兒發展階段｜一起玩玩看！';
+    window.scrollTo(0, 0); return;
+  }
+  if (i >= 0) {
+    $('home').hidden = true; $('toyview').hidden = false;
+    showToy(i); document.title = T[i].name + '｜一起玩玩看！';
+    window.scrollTo(0, 0);
+  } else {
+    $('toyview').hidden = true; $('home').hidden = false;
+    document.title = '一起玩玩看！';
+    if (last) { const a = document.querySelector(`.grid a[href="#${last}"]`); if (a) { a.scrollIntoView({block: 'center'}); a.focus({preventScroll: true}); } }
+    else window.scrollTo(0, 0);
+  }
+  last = i >= 0 ? id : last;
+}
+window.addEventListener('hashchange', route);
+route();
+}
+loadData().then(start);
+}
+</script>
+</body>
+</html>
