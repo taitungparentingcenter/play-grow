@@ -212,6 +212,29 @@ details.act[open] .chev{transform:rotate(90deg)}
 .act .say div{border-color:color-mix(in srgb,var(--dc) 45%,var(--line))}
 .act .hm{background:color-mix(in srgb,var(--dc) 12%,var(--card))}
 .hempty{padding:20px;text-align:center;color:var(--soft)}
+
+.hsub{max-width:34em;margin:6px 0 10px;font-size:16px;line-height:1.7;color:var(--sunInk);font-weight:500}
+.today{display:flex;align-items:center;gap:12px;margin:16px 0 0;padding:10px 12px 10px 10px;border-radius:20px;background:var(--tc,#3d82d6);color:#fff;text-decoration:none;box-shadow:0 5px 0 color-mix(in srgb,var(--tc,#3d82d6) 60%,#000);transition:transform .15s}
+.today:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--tc,#3d82d6) 60%,#000)}
+.today img{flex:none;width:64px;height:64px;border-radius:14px;object-fit:cover;background:#fff;border:3px solid #fff}
+.today .tt{flex:1;min-width:0;line-height:1.35}
+.today .tt small{display:block;font-size:13px;font-weight:700;opacity:.92}
+.today .tt b{display:block;font-family:Huninn,sans-serif;font-weight:400;font-size:21px;margin-top:2px}
+.today .tt span{display:block;font-size:14px;opacity:.95;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.today .go2{flex:none;background:#fff;color:var(--tc,#3d82d6);font-weight:700;font-size:15px;padding:7px 12px;border-radius:99px;white-space:nowrap}
+.menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 4px}
+.mcard{display:flex;align-items:center;gap:10px;padding:12px 10px;min-height:76px;border-radius:18px;background:var(--card);color:var(--ink);text-decoration:none;box-shadow:0 4px 0 color-mix(in srgb,var(--mi) 45%,#c9a24a);transition:transform .15s}
+.mcard:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--mi) 45%,#c9a24a)}
+.mic{flex:none;width:44px;height:44px;border-radius:13px;background:var(--mi);display:grid;place-items:center}
+.mic svg{width:28px;height:28px}
+.mt2{min-width:0;line-height:1.3}
+.mt2 b{display:block;font-family:Huninn,sans-serif;font-weight:400;font-size:17.5px}
+.mt2 small{display:block;color:var(--soft);font-size:13px;margin-top:3px;line-height:1.4}
+.mcard.line{background:var(--mi);color:#fff;box-shadow:0 4px 0 #04913f}
+.mcard.line .mic{background:rgba(255,255,255,.22)}.mcard.line small{color:#fff;opacity:.92}
+@media(max-width:560px){.mcard{flex-direction:column;align-items:flex-start;gap:8px;padding:12px}.mic{width:40px;height:40px;border-radius:12px}.mic svg{width:25px;height:25px}.mt2 b{font-size:17px}}
+@media(max-width:360px){.today .go2{display:none}}
+@media(min-width:700px){.menu{grid-template-columns:repeat(3,minmax(0,1fr))}.mcard{padding:14px}}
 .box.green{background:light-dark(#e8f4ec,#1f3328)}
 .places{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:8px}
 .place{background:var(--card);border-radius:16px;padding:12px 14px}
@@ -255,16 +278,20 @@ details.act[open] .chev{transform:rotate(90deg)}
    </svg>
   </div>
   <div class="wrap">
+   <p class="hsub">給照顧者的玩具小指南。每個玩具都有示範影片和好幾種玩法，家裡的毛巾、紙箱也能變成遊戲。</p>
    <p class="note">不用很會玩，也不用每次都玩得很成功，<br><b>開心是寶貝願意繼續學習的動力</b></p>
-   <ol class="how">
-    <li><i>1</i><span>選一個<br>玩具</span></li>
-    <li><i>2</i><span>看示範<br>影片</span></li>
-    <li><i>3</i><span>挑玩法<br>試試看</span></li>
-   </ol>
+   <a class="today" id="today" href="#"></a>
+   <nav class="menu" aria-label="網站內容">
+    <a class="mcard" href="#" data-jump="pick-h" style="--mi:#e8574a"><span class="mic" aria-hidden="true"><svg viewBox="0 0 30 30"><rect x="4" y="15" width="10" height="10" rx="2" fill="#fff"/><rect x="16" y="15" width="10" height="10" rx="2" fill="#fff" opacity=".8"/><rect x="10" y="4" width="10" height="10" rx="2" fill="#fff" transform="rotate(-8 15 9)"/></svg></span><span class="mt2"><b>選一個玩具</b><small id="mi-toys">示範影片和玩法</small></span></a>
+    <a class="mcard" href="#homeplay" style="--mi:#e0703a"><span class="mic" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M4 14L15 5l11 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 13v12h16V13" fill="#fff"/><circle cx="15" cy="19" r="3" fill="var(--mi)"/></svg></span><span class="mt2"><b>家裡的東西也能玩</b><small id="mi-home">毛巾、紙箱、鍋碗瓢盆</small></span></a>
+    <a class="mcard" href="#growth" style="--mi:#4fae6a"><span class="mic" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 27V13" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M15 15c0-6 4-9 10-9 0 6-4 9-10 9zM15 18c0-5-3-8-9-8 0 5 3 8 9 8z" fill="#fff"/></svg></span><span class="mt2"><b>幼兒發展階段</b><small>0～6歲發展、篩檢與諮詢</small></span></a>
+    <a class="mcard" href="#" data-jump="tips-h" style="--mi:#8a63c9"><span class="mic" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 4a8 8 0 0 0-5 14v3h10v-3a8 8 0 0 0-5-14z" fill="#fff"/><rect x="11" y="23" width="8" height="3" rx="1.5" fill="#fff"/></svg></span><span class="mt2"><b>一起玩的小提醒</b><small>讓陪玩更輕鬆的小撇步</small></span></a>
+    <a class="mcard" href="#" data-jump="more-h" style="--mi:#3d82d6"><span class="mic" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 25s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12z" fill="#fff"/></svg></span><span class="mt2"><b>更多陪伴資源</b><small>育兒小知識、親子活動</small></span></a>
+    <a class="mcard line" id="mi-line" href="https://lin.ee/zpl0WwJ" target="_blank" rel="noopener" style="--mi:#06c755"><span class="mic" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M15 5C9 5 4 9 4 14c0 4.4 3.9 8 9.1 8.8L12 26l5-3.2c5-.9 9-4.4 9-8.8 0-5-5-9-11-9z" fill="#fff"/></svg></span><span class="mt2"><b>加入官方LINE</b><small>臺東縣居家賦能計畫</small></span></a>
+   </nav>
   </div>
  </header>
  <main class="wrap">
-  <a class="gbtn" href="#growth"><span class="gtop"><span class="ic" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 30 30"><path d="M15 27V13" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M15 15c0-6 4-9 10-9 0 6-4 9-10 9zM15 18c0-5-3-8-9-8 0 5 3 8 9 8z" fill="#fff"/></svg></span><span><small class="kick">給家長的參考</small><b>幼兒發展階段</b><small>0～6歲常見的發展、免費發展篩檢、臺東諮詢資源</small></span></span><span class="go">點我進去看<i aria-hidden="true">›</i></span></a>
   <section class="notice" aria-labelledby="notice-h">
    <h2 id="notice-h"><span class="nb" aria-hidden="true">!</span>使用前請看</h2>
    <div class="nrow"><span class="ni" style="--n:#3d82d6" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M8 5v14l11-7z" fill="#fff"/></svg></span><p>影片為動畫示範，玩法和年齡都只是參考，可以依孩子的能力和興趣調整；<b>沒有標準玩法，大家玩得自在最重要。</b></p></div>
@@ -274,7 +301,6 @@ details.act[open] .chev{transform:rotate(90deg)}
    <h2 id="pick-h">選一個玩具 <small class="hint">點卡片看玩法和影片</small></h2>
    <ul class="grid" id="grid"></ul>
   </section>
-  <a class="gbtn hp" href="#homeplay"><span class="gtop"><span class="ic" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 30 30"><path d="M4 14L15 5l11 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 13v12h16V13" fill="#fff"/><circle cx="15" cy="19" r="3" fill="#e0703a"/></svg></span><span><small class="kick">不用花錢</small><b>家裡的東西也能玩</b><small>毛巾、紙箱、鍋碗瓢盆，邊玩邊學的居家小遊戲</small></span></span><span class="go">點我進去看<i aria-hidden="true">›</i></span></a>
   <section class="tipsec" aria-labelledby="tips-h">
    <h2 id="tips-h">一起玩的小提醒</h2>
    <p class="mlead">玩之前看一下，玩起來更輕鬆</p>
@@ -388,7 +414,7 @@ $('mgrid').innerHTML = (DATA.more || []).map(m => {
     ? '<svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 5C9.4 5 4 9.3 4 14.6c0 4.7 4.3 8.7 10.1 9.4.4.1.9.3 1 .6.1.3.1.8 0 1.1l-.2 1c0 .3-.2 1.2 1.1.6s7-4.1 9.5-7.1C27.2 18.3 28 16.5 28 14.6 28 9.3 22.6 5 16 5z" fill="#fff"/></svg>'
     : /活動|地圖|地點/.test(m.name + m.btn) ? '<svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 4a8 8 0 0 0-8 8c0 6 8 15 8 15s8-9 8-15a8 8 0 0 0-8-8zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" fill="#fff"/></svg>'
     : '<svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 27s-10-6.2-10-13a5.5 5.5 0 0 1 10-3.2A5.5 5.5 0 0 1 26 14c0 6.8-10 13-10 13z" fill="#fff"/></svg>';
-  const inner = `<span class="mi" aria-hidden="true">${icon}</span><span class="mt"><b>${esc(m.name)}</b><small>${esc(m.desc)}</small></span>`;
+  const inner = `<span class="mcard" aria-hidden="true">${icon}</span><span class="mt"><b>${esc(m.name)}</b><small>${esc(m.desc)}</small></span>`;
   if (m.kind === 'LINE') return `<div class="mc line" style="--m:${esc(m.color)}">${inner}${m.qr ? `<img class="qr" src="img/${esc(m.qr)}" alt="${esc(m.name)} QR code">` : ''}<a class="mgo" href="${esc(m.url)}" target="_blank" rel="noopener">${esc(m.btn)} ›</a></div>`;
   return `<a class="mc" style="--m:${esc(m.color)}" href="${esc(m.url)}" target="_blank" rel="noopener">${inner}<span class="mgo">${esc(m.btn)} ›</span></a>`;
 }).join('');
@@ -583,6 +609,26 @@ $('vclose').addEventListener('click', closeV);
 $('vmodal').addEventListener('click', e => { if (e.target === $('vmodal')) closeV(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('vmodal').hidden) closeV(); });
 window.addEventListener('hashchange', () => { if (!$('vmodal').hidden) closeV(); });
+
+// ===== 封面：今天玩這個 + 選單 =====
+(() => {
+  const now = new Date();
+  const day = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 864e5);
+  const t = T[day % T.length];
+  if (t) {
+    const wd = '日一二三四五六'[now.getDay()];
+    const a = $('today');
+    a.href = '#' + t.id; a.style.setProperty('--tc', t.color);
+    a.innerHTML = `<img src="img/${esc(t.photo || t.id + '.jpg')}" alt=""><span class="tt"><small>今天玩這個・${now.getMonth() + 1}/${now.getDate()}（${wd}）</small><b>${esc(t.name)}</b><span>${esc(t.intro || '')}</span></span><span class="go2">去看看 →</span>`;
+  } else $('today').hidden = true;
+  $('mi-toys').textContent = `${T.length}種玩具的示範影片和玩法`;
+  if ((DATA.home || []).length) $('mi-home').textContent = `${DATA.home.length}個不用花錢的小遊戲`;
+  const ln = (DATA.more || []).find(m => /lin\.ee|line\.me/.test(m.url || m.link || ''));
+  if (ln) $('mi-line').href = ln.url || ln.link;
+  document.querySelectorAll('[data-jump]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); const el = $(a.dataset.jump); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }));
+})();
 
 let last = null;
 function route() {
