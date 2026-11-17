@@ -214,14 +214,6 @@ details.act[open] .chev{transform:rotate(90deg)}
 .hempty{padding:20px;text-align:center;color:var(--soft)}
 
 .hsub{max-width:34em;margin:6px 0 10px;font-size:16px;line-height:1.7;color:var(--sunInk);font-weight:500}
-.today{display:flex;align-items:center;gap:12px;margin:16px 0 0;padding:10px 12px 10px 10px;border-radius:20px;background:var(--tc,#3d82d6);color:#fff;text-decoration:none;box-shadow:0 5px 0 color-mix(in srgb,var(--tc,#3d82d6) 60%,#000);transition:transform .15s}
-.today:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--tc,#3d82d6) 60%,#000)}
-.today img{flex:none;width:64px;height:64px;border-radius:14px;object-fit:cover;background:#fff;border:3px solid #fff}
-.today .tt{flex:1;min-width:0;line-height:1.35}
-.today .tt small{display:block;font-size:13px;font-weight:700;opacity:.92}
-.today .tt b{display:block;font-family:Huninn,sans-serif;font-weight:400;font-size:21px;margin-top:2px}
-.today .tt span{display:block;font-size:14px;opacity:.95;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.today .go2{flex:none;background:#fff;color:var(--tc,#3d82d6);font-weight:700;font-size:15px;padding:7px 12px;border-radius:99px;white-space:nowrap}
 .menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 4px}
 .mcard{display:flex;align-items:center;gap:10px;padding:12px 10px;min-height:76px;border-radius:18px;background:var(--card);color:var(--ink);text-decoration:none;box-shadow:0 4px 0 color-mix(in srgb,var(--mi) 45%,#c9a24a);transition:transform .15s}
 .mcard:active{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--mi) 45%,#c9a24a)}
@@ -233,7 +225,6 @@ details.act[open] .chev{transform:rotate(90deg)}
 .mcard.line{background:var(--mi);color:#fff;box-shadow:0 4px 0 #04913f}
 .mcard.line .mic{background:rgba(255,255,255,.22)}.mcard.line small{color:#fff;opacity:.92}
 @media(max-width:560px){.mcard{flex-direction:column;align-items:flex-start;gap:8px;padding:12px}.mic{width:40px;height:40px;border-radius:12px}.mic svg{width:25px;height:25px}.mt2 b{font-size:17px}}
-@media(max-width:360px){.today .go2{display:none}}
 @media(min-width:700px){.menu{grid-template-columns:repeat(3,minmax(0,1fr))}.mcard{padding:14px}}
 .box.green{background:light-dark(#e8f4ec,#1f3328)}
 .places{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:8px}
@@ -280,7 +271,6 @@ details.act[open] .chev{transform:rotate(90deg)}
   <div class="wrap">
    <p class="hsub">給照顧者的玩具小指南。每個玩具都有示範影片和好幾種玩法，家裡的毛巾、紙箱也能變成遊戲。</p>
    <p class="note">不用很會玩，也不用每次都玩得很成功，<br><b>開心是寶貝願意繼續學習的動力</b></p>
-   <a class="today" id="today" href="#"></a>
    <nav class="menu" aria-label="網站內容">
     <a class="mcard" href="#" data-jump="pick-h" style="--mi:#e8574a"><span class="mic" aria-hidden="true"><svg viewBox="0 0 30 30"><rect x="4" y="15" width="10" height="10" rx="2" fill="#fff"/><rect x="16" y="15" width="10" height="10" rx="2" fill="#fff" opacity=".8"/><rect x="10" y="4" width="10" height="10" rx="2" fill="#fff" transform="rotate(-8 15 9)"/></svg></span><span class="mt2"><b>選一個玩具</b><small id="mi-toys">示範影片和玩法</small></span></a>
     <a class="mcard" href="#homeplay" style="--mi:#e0703a"><span class="mic" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M4 14L15 5l11 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 13v12h16V13" fill="#fff"/><circle cx="15" cy="19" r="3" fill="var(--mi)"/></svg></span><span class="mt2"><b>家裡的東西也能玩</b><small id="mi-home">毛巾、紙箱、鍋碗瓢盆</small></span></a>
@@ -612,16 +602,7 @@ window.addEventListener('hashchange', () => { if (!$('vmodal').hidden) closeV();
 
 // ===== 封面：今天玩這個 + 選單 =====
 (() => {
-  const now = new Date();
-  const day = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 864e5);
-  const t = T[day % T.length];
-  if (t) {
-    const wd = '日一二三四五六'[now.getDay()];
-    const a = $('today');
-    a.href = '#' + t.id; a.style.setProperty('--tc', t.color);
-    a.innerHTML = `<img src="img/${esc(t.photo || t.id + '.jpg')}" alt=""><span class="tt"><small>今天玩這個・${now.getMonth() + 1}/${now.getDate()}（${wd}）</small><b>${esc(t.name)}</b><span>${esc(t.intro || '')}</span></span><span class="go2">去看看 →</span>`;
-  } else $('today').hidden = true;
-  $('mi-toys').textContent = `${T.length}種玩具的示範影片和玩法`;
+  $('mi-toys').textContent = `${T.length}種玩具的示範影片`;
   if ((DATA.home || []).length) $('mi-home').textContent = `${DATA.home.length}個不用花錢的小遊戲`;
   const ln = (DATA.more || []).find(m => /lin\.ee|line\.me/.test(m.url || m.link || ''));
   if (ln) $('mi-line').href = ln.url || ln.link;
