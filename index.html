@@ -181,8 +181,15 @@ footer .wrap>div{border-top:1px solid var(--line);padding-top:16px}
 .res div{background:var(--card);border-radius:14px;padding:10px 14px;font-size:15.5px}
 .res b{display:block}
 .src{font-size:13.5px;color:var(--soft);margin-top:10px}
-.cite{margin-top:22px;font-size:14px;color:var(--soft)}
+.cite{margin-top:22px;font-size:13px;color:var(--soft);border-top:1px dashed var(--line,#ddd);padding-top:10px}
 .cite a{color:inherit}
+.cite>p{margin:0 0 4px}
+.cite details summary{cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:4px 0;font-weight:600;list-style:none}
+.cite details summary::-webkit-details-marker{display:none}
+.cite details summary::after{content:'▸';transition:transform .2s}
+.cite details[open] summary::after{transform:rotate(90deg)}
+.cite ul{margin:6px 0 0;padding-left:1.2em;line-height:1.6}
+.cite li{margin:2px 0}
 
 .gbtn.hp{background:linear-gradient(135deg,#f2a640,#e0703a);box-shadow:0 6px 0 #b4552a,0 10px 20px rgba(224,112,58,.25)}
 .gbtn.hp:active{box-shadow:0 2px 0 #b4552a,0 4px 10px rgba(224,112,58,.25)}
@@ -536,9 +543,8 @@ function showGrowth() {
    <p class="src">資料來源：衛生福利部國民健康署《兒童發展篩檢懶人包》（2024）。本頁以文字重新整理，未轉載原手冊圖片。</p>
   </section>
   <div class="cite">
-   <p>參考資料：</p>
-   <p>兒福聯盟〈<a href="https://www.children.org.tw/news/news_detail/child-development-stages" target="_blank" rel="noopener">兒童發展總整理：輕鬆掌握0～6歲指標、評估與家長照顧重點</a>〉；衛生福利部國民健康署《兒童發展篩檢懶人包》（2024）及兒童健康手冊。</p>
-   <p>本頁發展指標由本網站參考上述資料，以自己的文字重新整理撰寫，並非原文轉載，也未使用原有圖片。內容僅供參考，不能取代醫師或專業人員的評估。</p>
+   <p>本頁以自己的文字重新整理，未使用原有圖片；僅供參考，不能取代專業評估。</p>
+   <details><summary>參考資料（2筆）</summary><ul><li>兒福聯盟〈<a href="https://www.children.org.tw/news/news_detail/child-development-stages" target="_blank" rel="noopener">兒童發展總整理</a>〉</li><li>衛生福利部國民健康署《兒童發展篩檢懶人包》（2024）及兒童健康手冊</li></ul></details>
   </div>
   <a class="all" href="#">回到全部玩具</a>`;
   const setG = id => {
@@ -582,9 +588,8 @@ function showHome() {
   <p class="hcount" id="hcount"></p>
   <div id="hlist"></div>
   <div class="cite">
-   <p>參考資料：</p>
-   <p>${Object.entries(srcs).map(([n, u]) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>` : esc(n)).join('；')}</p>
-   <p>本頁玩法由本網站參考上述機構的建議，以自己的文字重新整理撰寫，並非原文翻譯或轉載，也未使用原有圖片。年齡只是參考，可依孩子的能力調整。</p>
+   <p>玩法參考下列機構建議，以自己的文字重新整理，未使用原有圖片；年齡只是參考。</p>
+   <details><summary>參考資料（${Object.keys(srcs).length}筆）</summary><ul>${Object.entries(srcs).map(([n, u]) => `<li>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>` : esc(n)}</li>`).join('')}</ul></details>
   </div>
   <a class="all" href="#">回到全部玩具</a>`;
   const draw = () => {
@@ -660,9 +665,8 @@ function showCalm() {
   <div class="tools">${TL.map(t => `<details class="act" style="--dc:${/加重毯/.test(t.name) ? '#d14b4b' : '#2e8b57'}"><summary><span class="ai" aria-hidden="true">輔具</span><span class="at"><b>${esc(t.name)}</b><small>${esc(t.use)}</small>${t.buy && !/討論/.test(t.buy) ? `<span class="ag">${esc(t.buy)}</span>` : ''}</span><i class="chev" aria-hidden="true">›</i></summary>
    <div class="ab">${t.when ? `<p class="when"><b>什麼時候用：</b>${esc(t.when)}</p>` : ''}${t.buy && /討論/.test(t.buy) ? `<p class="when"><b>購置建議：</b>${esc(t.buy)}</p>` : ''}${t.alt ? `<div class="note hm"><b>預算有限時可以這樣替代</b><p>${esc(t.alt)}</p></div>` : ''}${t.tip ? `<div class="note safe"><b>使用提醒</b><p>${esc(t.tip)}</p></div>` : ''}${t.src ? `<p class="src">參考：${srcHtml(t.src)}</p>` : ''}</div></details>`).join('')}</div>` : ''}
   <div class="cite">
-   <p>參考資料：</p>
-   <p>${SRCS.map(([k, n, u]) => u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>` : esc(n)).join('；')}</p>
-   <p>本頁方法由本網站參考上述機構的建議，以自己的文字重新整理撰寫，並非原文翻譯或轉載。</p>
+   <p>方法參考下列機構建議，以自己的文字重新整理，並非原文翻譯或轉載。</p>
+   <details><summary>參考資料（${SRCS.length}筆）</summary><ul>${SRCS.map(([k, n, u]) => `<li>${u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>` : esc(n)}</li>`).join('')}</ul></details>
   </div>
   <a class="all" href="#">回到全部玩具</a>`;
   const draw = () => {
