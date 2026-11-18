@@ -238,6 +238,14 @@ details.act[open] .chev{transform:rotate(90deg)}
 .tools{margin:6px 0 0}
 .tools details.act summary{min-height:52px}
 .tools .ai{font-size:12px}
+.medl{margin:8px 0 0}
+.medl dt{font-weight:700;margin-top:10px;color:var(--ink)}
+.medl dt:first-child{margin-top:0}
+.medl dd{margin:4px 0 0;padding:10px 12px;background:var(--card);border-radius:12px;line-height:1.75}
+.emerg{margin:14px 0;padding:12px 14px 12px 50px;border:2px solid #d14b4b;border-radius:16px;background:color-mix(in srgb,#d14b4b 8%,var(--card));position:relative}
+.emerg::before{content:"!";position:absolute;left:14px;top:13px;width:24px;height:24px;border-radius:50%;background:#d14b4b;color:#fff;font-weight:700;display:grid;place-items:center;font-size:15px}
+.emerg b{color:#c03a3a;font-size:16.5px}
+.emerg p{margin:3px 0 0}
 .box.green{background:light-dark(#e8f4ec,#1f3328)}
 .places{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:8px}
 .place{background:var(--card);border-radius:16px;padding:12px 14px}
@@ -631,8 +639,16 @@ function showCalm() {
    <li><b>每個孩子不一樣：</b>同一個活動，有的孩子變平靜、有的更興奮。先觀察，留下有效的。</li>
    <li><b>冷靜的方法要平常先練：</b>情緒來的時候才用得出來。孩子說停就停，不要勉強。</li>
    <li><b>這些是日常小幫手，不能取代評估和治療：</b>擔心孩子的狀況，請先跟你的社工討論，或聯絡早療協會台東辦事處預約諮詢（<a href="tel:089236531">089-236531</a>）。</li>
-   <li><b>必要時請直接就醫，和醫師討論：</b>6 歲以下的孩子，可以到臺東馬偕紀念醫院（<a href="tel:089351642">089-351642</a>）或臺東基督教醫院（<a href="tel:089960115">089-960115</a>）的兒童發展聯合評估中心；學齡的孩子，可以到醫院的兒童心智科或身心科門診（例如衛生福利部臺東醫院身心科）。掛號前可以先打電話問有沒有兒童門診。如果孩子可能傷害自己或別人，請直接到急診或撥打 119。</li>
   </ul></section>
+  <section class="box green"><h2>必要時請直接就醫，和醫師討論</h2>
+   <dl class="medl">
+    <dt>6 歲以下的孩子</dt>
+    <dd>到兒童發展聯合評估中心：<br>臺東馬偕紀念醫院（<a href="tel:089351642">089-351642</a>）<br>臺東基督教醫院（<a href="tel:089960115">089-960115</a>）</dd>
+    <dt>學齡的孩子</dt>
+    <dd>到醫院的兒童心智科或身心科門診，例如衛生福利部臺東醫院身心科。掛號前可以先打電話問有沒有兒童門診。</dd>
+   </dl>
+  </section>
+  <div class="emerg" role="note"><b>緊急情況才需要</b><p>孩子當下已經開始傷害自己或別人致險時，請直接到急診或撥打 <a href="tel:119">119</a>。</p></div>
   <p class="flab">孩子需要哪方面的幫忙？</p>
   <div class="chips ns" role="group" aria-label="選擇需要" id="cneeds"><button type="button" data-n="all">全部</button>${CN.map(n => `<button type="button" data-n="${n}">${n}</button>`).join('')}</div>
   <p class="flab">想找哪一類？</p>
