@@ -761,5 +761,127 @@ route();
 loadData().then(start);
 }
 </script>
+<!-- ===== 瀏覽人次與回饋（開始）=====
+  把整段貼在網頁的 </body> 前面。只需要改下面兩個地方：
+  1. endpoint：貼上 Apps Script 部署後的「網頁應用程式網址」
+  2. site：這個網站的名稱（會出現在試算表的「網站」欄）
+-->
+<script>
+window.FB_CONFIG = {
+  endpoint: '請貼上網頁應用程式網址',
+  site: '一起玩玩看',
+  pageFeedback: true,   // 頁面最下方加「這個網頁對你有幫助嗎？」；不要的話改成 false
+  pageTitle: '這個網頁對你有幫助嗎？'
+};
+</script>
+<style>
+.fb-box{margin:16px 0 0;padding:14px 16px;border-radius:14px;background:var(--fb-bg,rgba(127,127,127,.08));font-size:15px;line-height:1.6}
+.fb-q{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.fb-q>span{font-weight:700;margin-right:4px}
+.fb-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--fb-line,rgba(127,127,127,.35));background:var(--fb-card,transparent);color:inherit;font:inherit;font-size:14.5px;border-radius:999px;padding:6px 14px;min-height:40px;cursor:pointer}
+.fb-btn:hover{border-color:var(--fb-acc,#1f6fa8)}
+.fb-btn:focus-visible,.fb-chip:focus-visible,.fb-send:focus-visible,.fb-note:focus-visible{outline:3px solid var(--fb-acc,#1f6fa8);outline-offset:2px}
+.fb-btn svg{width:18px;height:18px}
+.fb-more{margin-top:12px;display:grid;gap:10px}
+.fb-chips{display:flex;flex-wrap:wrap;gap:8px}
+.fb-chip{border:1px solid var(--fb-line,rgba(127,127,127,.35));background:var(--fb-card,transparent);color:inherit;font:inherit;font-size:14px;border-radius:10px;padding:6px 12px;min-height:38px;cursor:pointer}
+.fb-chip[aria-pressed=true]{background:var(--fb-acc,#1f6fa8);border-color:var(--fb-acc,#1f6fa8);color:#fff}
+.fb-note{width:100%;min-height:72px;border:1px solid var(--fb-line,rgba(127,127,127,.35));border-radius:10px;padding:10px;font:inherit;font-size:16px;background:var(--fb-card,transparent);color:inherit;resize:vertical}
+.fb-tip{font-size:13px;opacity:.75;margin:-4px 0 0}
+.fb-send{justify-self:start;border:0;background:var(--fb-acc,#1f6fa8);color:#fff;font:inherit;font-size:15px;border-radius:10px;padding:8px 18px;min-height:42px;cursor:pointer}
+.fb-thanks{font-weight:700;color:var(--fb-acc,#1f6fa8)}
+.fb-page{max-width:760px;margin:24px auto;padding:0 16px}
+.fb-views-bar{display:block;text-align:center;font-size:14px;opacity:.8;padding:8px 16px 14px;clear:both}
+[data-fb-views]:empty::before{content:'—'}
+</style>
+<script>
+(function(){
+  var C = window.FB_CONFIG || {};
+  var ON = /^https:\/\/script\.google\.com\//.test(C.endpoint || '');
+  var REASONS = ['太難做到', '不符合我家孩子的狀況', '看不懂', '想知道更多'];
+  var UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11v9H4v-9zM7 11l4-8a2.5 2.5 0 0 1 2.5 2.5V9h5.2a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.5 20H7"/></svg>';
+  var DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 13V4h3v9zM17 13l-4 8a2.5 2.5 0 0 1-2.5-2.5V15H5.3a2 2 0 0 1-2-2.3l1.2-7A2 2 0 0 1 6.5 4H17"/></svg>';
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function store(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function q(params){ return Object.keys(params).map(function(k){ return k + '=' + encodeURIComponent(params[k] || ''); }).join('&'); }
+
+  /* 計一次瀏覽，回傳累計人次 */
+  function hit(page, title){
+    if (!ON) return Promise.resolve(null);
+    return fetch(C.endpoint + '?' + q({ a: 'hit', site: C.site, page: page || 'home', title: title || document.title }))
+      .then(function(r){ return r.json(); }).then(function(d){ return d.count; }).catch(function(){ return null; });
+  }
+  function send(data){
+    if (!ON) return;
+    data.a = 'fb'; data.site = C.site;
+    fetch(C.endpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) }).catch(function(){});
+  }
+
+  /* 在 el 裡放一個「有幫助嗎？」小方塊 */
+  function item(el, id, title, label){
+    if (!ON || !el || el.dataset.fbReady) return;
+    el.dataset.fbReady = '1';
+    var key = 'fb:' + C.site + ':' + id;
+    if (store(key)) { el.innerHTML = '<div class="fb-box"><span class="fb-thanks">謝謝你的回饋！</span></div>'; return; }
+    el.innerHTML = '<div class="fb-box"><div class="fb-q"><span>' + esc(label || '這個答案對你有幫助嗎？') + '</span>' +
+      '<button type="button" class="fb-btn" data-v="yes">' + UP + '有幫助</button>' +
+      '<button type="button" class="fb-btn" data-v="no">' + DOWN + '沒什麼幫助</button></div></div>';
+    var box = el.firstChild;
+    box.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.v === 'yes') {
+        send({ page: id, title: title, helpful: 'yes' }); store(key, '1');
+        box.innerHTML = '<span class="fb-thanks">謝謝你的回饋！</span>';
+      } else if (b.dataset.v === 'no') {
+        box.innerHTML = '<div class="fb-q"><span>哪裡可以更好？（可複選，也可以不選）</span></div><div class="fb-more">' +
+          '<div class="fb-chips">' + REASONS.map(function(r){ return '<button type="button" class="fb-chip" aria-pressed="false">' + r + '</button>'; }).join('') + '</div>' +
+          '<textarea class="fb-note" maxlength="500" aria-label="補充說明" placeholder="還想告訴我們什麼？（選填）"></textarea>' +
+          '<p class="fb-tip">請不要寫下孩子或家人的姓名等個人資料。</p>' +
+          '<button type="button" class="fb-send">送出</button></div>';
+      } else if (b.classList.contains('fb-chip')) {
+        b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      } else if (b.classList.contains('fb-send')) {
+        var rs = [].slice.call(box.querySelectorAll('.fb-chip[aria-pressed=true]')).map(function(x){ return x.textContent; });
+        send({ page: id, title: title, helpful: 'no', reasons: rs, note: box.querySelector('.fb-note').value });
+        store(key, '1');
+        box.innerHTML = '<span class="fb-thanks">謝謝你的回饋！我們會用來改進內容。</span>';
+      }
+    });
+  }
+
+  window.FB = { hit: hit, item: item, on: ON };
+
+  function start(){
+    if (!ON) return;
+    if (C.pageFeedback) {
+      var holder = document.createElement('div');
+      holder.className = 'fb-page';
+      var foot = document.querySelector('footer');
+      if (foot && foot.parentNode) foot.parentNode.insertBefore(holder, foot); else document.body.appendChild(holder);
+      item(holder, 'home', document.title, C.pageTitle);
+    }
+    var spots = document.querySelectorAll('[data-fb-views]');
+    if (!spots.length) {
+      /* 沒有指定位置時：放在頁尾的 logo 下面；沒有 logo 就放頁尾最後；沒有頁尾就放頁面最下方 */
+      var bar = document.createElement('div');
+      bar.className = 'fb-views-bar';
+      bar.innerHTML = '瀏覽人次 <span data-fb-views></span>';
+      var ft = document.querySelector('footer');
+      var logos = ft ? ft.querySelectorAll('img, svg[role=img]') : [];
+      var logo = logos.length ? logos[logos.length - 1] : null;
+      if (logo) { var host = logo.closest('.gov') || (logo.closest('a') && ft.contains(logo.closest('a')) ? logo.closest('a') : logo); host.parentNode.insertBefore(bar, host.nextSibling); }
+      else if (ft) ft.appendChild(bar);
+      else document.body.appendChild(bar);
+      spots = bar.querySelectorAll('[data-fb-views]');
+    }
+    hit('home', document.title).then(function(n){
+      if (n == null) return;
+      [].forEach.call(spots, function(s){ s.textContent = Number(n).toLocaleString('zh-TW'); });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
+<!-- ===== 瀏覽人次與回饋（結束）===== -->
 </body>
 </html>
